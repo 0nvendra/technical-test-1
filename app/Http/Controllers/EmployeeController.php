@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StoreEmployeeReq;
 use App\Models\Employee;
 use Illuminate\Http\Request;
 
@@ -26,7 +27,7 @@ class EmployeeController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(StoreEmployeeReq $request) // implementasi rule/request pada at number 11
     {
         //
     }

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StoreCompanyReq;
 use App\Models\Company;
 use Illuminate\Http\Request;
 
@@ -26,7 +27,7 @@ class CompanyController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(StoreCompanyReq $request) // implementasi rule/request pada at number 11
     {
         //
     }
