@@ -23,7 +23,7 @@ the following:
 11. Use Laravel validation function, using Request classes.
 12. Use Ant Design Vue Library (Javscript UI library) and combine it with Tailwinds
     (Please refer to the official documentation for the library setup). Link to
-    AntDesignVue : https://antdv.com/components/overview
+    AntDesignVue : https://antdv.com/components/overview -> instalasi "npm install ant-design-vue@4.x --save"
 13. Explore the datatable component from Ant Design Vue 3 based on the
     documentation.
 14. Use Laravel resource and Laravel collection class to format the API response.
