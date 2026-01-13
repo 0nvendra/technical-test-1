@@ -21,7 +21,7 @@ class CompanySeeder extends Seeder
                 DB::table('companies')->insert([
                     'name' => fake()->company(),
                     'email' => fake()->unique()->safeEmail(),
-                    'logo' => fake()->imageUrl(450, 450, 'business', true),
+                    'logo' => 'https://placehold.co/450x450',
                     'website' => fake()->url(),
                 ]);
             }

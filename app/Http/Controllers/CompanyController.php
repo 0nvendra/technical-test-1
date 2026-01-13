@@ -3,18 +3,32 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreCompanyReq;
+use App\Http\Resources\CompanyCollection;
+use App\Http\Resources\CompanyResource;
 use App\Models\Company;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Inertia\Inertia;
 
 class CompanyController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
+
+    private $name = 'Company';
+    private $dir = 'Company/';
+
     public function index()
     {
-        //
-
+        $funcName = 'Index';
+        //refrensi https://laravel.com/docs/12.x/eloquent-resources#resource-collections
+        $datas = CompanyResource::collection(Company::paginate(5));
+        return Inertia::render($this->dir . $funcName, [
+            'title' => $this->name . ' - ' . $funcName,
+            // 'columns' => $columns,
+            'datas' => $datas,
+        ]);
     }
 
     /**
@@ -62,6 +76,15 @@ class CompanyController extends Controller
      */
     public function destroy(Company $company)
     {
+        // return $company;
+        DB::beginTransaction();
+        try {
+            $company->delete();
+            DB::commit();
+        } catch (\Exception $e) {
+            DB::rollBack();
+        }
+        // return response()->json(['status' => 'success'], 200);
         //
     }
 }
