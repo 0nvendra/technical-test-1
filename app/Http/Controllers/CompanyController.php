@@ -61,7 +61,7 @@ class CompanyController extends Controller
                 $manager = new ImageManager(new Driver());
                 $image = $manager->read($logo->getPathname());
                 // resize ke 300x300
-                $image->scale(width: 300);
+                $image->scale(width: 300, height: 300);
 
                 // jadikan string atau path buat simpan ke db
                 $hasil = 'img/' . Str::lower($this->dir) . $filename;
@@ -99,9 +99,44 @@ class CompanyController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Company $company)
+    public function update(StoreCompanyReq $request, Company $company)
     {
-        //
+
+        DB::beginTransaction();
+        try {
+            $data = $request->validated();
+            // fotonya di upload dulu, baru hapus yanag lama
+            if ($request->hasFile('logo')) {
+
+                $logo = $request->file('logo');
+                $filename = time() . '.' . $logo->getClientOriginalExtension();
+
+                // menggunakan intervention image refrensi: https://image.intervention.io/v3
+                $manager = new ImageManager(new Driver());
+                $image = $manager->read($logo->getPathname());
+                // resize ke 300x300
+                $image->scale(width: 300, height: 300);
+
+                // jadikan string atau path buat simpan ke db
+                $hasil = 'img/' . Str::lower($this->dir) . $filename;
+                // return $hasil;
+                $data['logo'] =  '/storage/' . $hasil;
+
+                //  refrensi if file exist :https://laravel.com/docs/12.x/filesystem
+                $fileLama = ltrim(Str::replace('/storage', '', $company->logo), '/');
+                Storage::disk('public')->delete($fileLama);
+
+                // store yang baru, mantap
+                Storage::disk('public')->put($hasil, $image->encode());
+
+                $company->update($data);
+            }
+            DB::commit();
+            return redirect()->route('company.index')->with('success', 'Company Updated');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return $e->getMessage();
+        }
     }
 
     /**

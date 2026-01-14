@@ -24,12 +24,13 @@ class UserSeeder extends Seeder
             DB::table('users')->insert([
                 'name' => 'admin@grtech.com',
                 'email' => 'admin@grtech.com',
-                'role' => 0,
+                'role' => 0, // <-- adminrole
                 'password' => bcrypt('password'),
             ]);
             DB::table('users')->insert([
                 'name' => 'user@grtech.com',
                 'email' => 'user@grtech.com',
+                'role' => 1, //<-- user role
                 'password' => bcrypt('password'),
 
             ]);

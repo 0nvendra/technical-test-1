@@ -17,7 +17,7 @@ defineEmits(['close'])
                         <div class="sm:flex sm:items-start">
                             <div class="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
                                 <form :action="route('company.store')" method="post" enctype="multipart/form-data"
-                                    Accept="application/json">
+                                    Accept="application/json" @submit="submitForm">
                                     <!-- token below:
                                     {{ csrfToken }} -->
                                     <input type="hidden" name="_token" :value="csrfToken">
@@ -87,9 +87,7 @@ defineEmits(['close'])
                                             class="text-sm/6 font-semibold text-gray-900">Cancel</button>
                                         <button type="submit"
                                             class="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-xs hover:bg-indigo-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">
-                                            Submit
-                                            <!-- bisa di tambah loading spinner di bawah ini, agar cantik -->
-                                        </button>
+                                            Submit</button>
                                     </div>
                                 </form>
 
