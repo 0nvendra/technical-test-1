@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\ValidationException;
 
 class StoreCompanyReq extends FormRequest
 {
@@ -11,7 +12,7 @@ class StoreCompanyReq extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true; // harus diubah ke true, agar tidak err 419
     }
 
     /**
@@ -19,13 +20,22 @@ class StoreCompanyReq extends FormRequest
      *
      * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
      */
+
     public function rules(): array
     {
         return [
-            'name' => 'required|string|max:255', 
-            'email' => 'nullable|email|max:255',
-            'logo' => 'nullable|image|dimensions:min_width=450,min_height=450',
-            'website' => 'nullable|url|max:255',
+            'name' => 'required|string|max:255',
+            'email' => 'required|email|max:255',
+            'logo' => 'required|image|mimes:jpeg,png,jpg|dimensions:min_width=100,min_height=100',
+            'website' => 'required|url|max:255',
         ];
+    }
+
+    protected function failedValidation($validator)
+    {
+        throw new ValidationException(
+            $validator,
+            response()->json($validator->errors(), 422)
+        );
     }
 }

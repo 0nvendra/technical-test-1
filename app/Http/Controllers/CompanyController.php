@@ -3,12 +3,15 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreCompanyReq;
-use App\Http\Resources\CompanyCollection;
 use App\Http\Resources\CompanyResource;
 use App\Models\Company;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 use Inertia\Inertia;
+use Intervention\Image\ImageManager;
+use Intervention\Image\Drivers\Gd\Driver;
 
 class CompanyController extends Controller
 {
@@ -23,10 +26,9 @@ class CompanyController extends Controller
     {
         $funcName = 'Index';
         //refrensi https://laravel.com/docs/12.x/eloquent-resources#resource-collections
-        $datas = CompanyResource::collection(Company::paginate(5));
+        $datas = CompanyResource::collection(Company::paginate(5)); //<-- ini ambil dari Resources/Company Resource
         return Inertia::render($this->dir . $funcName, [
-            'title' => $this->name . ' - ' . $funcName,
-            // 'columns' => $columns,
+            'title' => $this->name,
             'datas' => $datas,
         ]);
     }
@@ -42,11 +44,42 @@ class CompanyController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(StoreCompanyReq $request) // implementasi rule/request pada at number 11
-    {
-        //
-    }
 
+    public function store(StoreCompanyReq $request)
+    {
+
+        DB::beginTransaction();
+        try {
+            // validasi dulu pak
+            $data = $request->validated();
+            if ($request->hasFile('logo')) {
+
+                $logo = $request->file('logo');
+                $filename = time() . '.' . $logo->getClientOriginalExtension();
+
+                // menggunakan intervention image refrensi: https://image.intervention.io/v3
+                $manager = new ImageManager(new Driver());
+                $image = $manager->read($logo->getPathname());
+                // resize ke 300x300
+                $image->scale(width: 300);
+
+                // jadikan string atau path buat simpan ke db
+                $hasil = 'img/' . Str::lower($this->dir) . $filename;
+                // return $hasil;
+                $data['logo'] =  '/storage/' . $hasil;
+                Storage::disk('public')->put($hasil, $image->encode());
+            }
+            Company::create($data);
+            DB::commit();
+            // dd($data);
+            return redirect()->route('company.index')->with('success', 'Company Enrolled');
+            // return response()->json('allright', 201);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return $e->getMessage();
+            // return redirect()->back()->with('error', 'Failed to create company');
+        }
+    }
     /**
      * Display the specified resource.
      */
