@@ -17,6 +17,7 @@ class AdminMiddleware
     public function handle(Request $request, Closure $next): Response
     {
         // untuk laravel 12 middleware refrensinya : https://laravel.com/docs/12.x/middleware
+        // 0 admin, 1 user biasa (akan di batasin yang 1 saja)
         if (Auth::check() && Auth::user()->role === 1) abort(401);
         return $next($request);
     }

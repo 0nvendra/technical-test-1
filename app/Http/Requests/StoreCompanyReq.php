@@ -33,6 +33,7 @@ class StoreCompanyReq extends FormRequest
 
     protected function failedValidation($validator)
     {
+        // biar tau errornya dimana
         throw new ValidationException(
             $validator,
             response()->json($validator->errors(), 422)

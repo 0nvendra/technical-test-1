@@ -80,6 +80,7 @@ class CompanyController extends Controller
             // return redirect()->back()->with('error', 'Failed to create company');
         }
     }
+    
     /**
      * Display the specified resource.
      */

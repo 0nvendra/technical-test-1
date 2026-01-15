@@ -133,7 +133,6 @@ const companyData = ref({})
                     current: props.datas.meta.current_page,
                     pageSize: props.datas.meta.per_page,
                     total: props.datas.meta.total,
-                    scroll: { x: 'max-content' }
                 }" @change="handlePaginate">
                     <template #bodyCell="{ column, record }">
 
@@ -166,7 +165,7 @@ const companyData = ref({})
                                     </span>
                                 </button>
                                 <button @click="(companyData = { ...record })" command="show-modal"
-                                    commandfor="readDialog"
+                                    commandfor="companyReadDialog"
                                     class="bg-slate-200 inline-flex items-center text-body bg-neutral-primary-soft border border-default hover:bg-neutral-secondary-medium hover:text-heading focus:ring-3 focus:ring-neutral-tertiary-soft font-medium leading-5 rounded-s-base text-sm px-3 py-2 focus:outline-none">
                                     <span>
                                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
@@ -249,7 +248,7 @@ const companyData = ref({})
         <!-- notif/toast for removed -->
         <div v-if="showToast" class="fixed top-40 right-5 bg-green-400 
             text-white px-4 py-2 rounded transition-all duration-1000 shadow-md ease-in-out">
-            Data berhasil dihapus!
+            {{ title }} removed
         </div>
         <EnrollDialog />
         <ReadDialog :data="companyData" />

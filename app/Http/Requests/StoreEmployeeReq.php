@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\ValidationException;
 
 class StoreEmployeeReq extends FormRequest
 {
@@ -11,7 +12,7 @@ class StoreEmployeeReq extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -22,13 +23,21 @@ class StoreEmployeeReq extends FormRequest
     public function rules(): array
     {
         return [
-            'first_name' => 'required|string|max:255',
-            'last_name' => 'required|string|max:255',
+            'firstName' => 'required|string|max:255',
+            'lastName' => 'required|string|max:255',
             'email' => 'nullable|email|max:255',
             'phone' => 'nullable|string|max:25',
 
             //relasi
             'company_id' => 'required|exists:companies,id',
         ];
+    }
+    
+    protected function failedValidation($validator)
+    {
+        throw new ValidationException(
+            $validator,
+            response()->json($validator->errors(), 422)
+        );
     }
 }

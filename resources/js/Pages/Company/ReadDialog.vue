@@ -10,7 +10,7 @@ defineEmits(['close'])
 </script>
 <template>
     <el-dialog>
-        <dialog id="readDialog" aria-labelledby="dialog-title"
+        <dialog id="companyReadDialog" aria-labelledby="dialog-title"
             class="fixed inset-0 w-500 max-h-none max-w-none overflow-y-auto bg-transparent backdrop:bg-transparent">
             <el-dialog-backdrop
                 class="fixed inset-0 bg-gray-500/75 transition-opacity data-closed:opacity-0 data-enter:duration-300 data-enter:ease-out data-leave:duration-200 data-leave:ease-in"></el-dialog-backdrop>
@@ -70,7 +70,7 @@ defineEmits(['close'])
                                                         address</label>
                                                     <div class="mt-2">
                                                         <input id="website" type="text" name="website"
-                                                            :value="data.website"  readonly
+                                                            :value="data.website" readonly
                                                             placeholder="must full format, example: http://google.com/"
                                                             autocomplete="website" required
                                                             class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 " />
@@ -81,7 +81,7 @@ defineEmits(['close'])
                                     </div>
 
                                     <div class="mt-6 flex items-center justify-end gap-x-6">
-                                        <button type="button" command="close" commandfor="readDialog"
+                                        <button type="button" command="close" commandfor="companyReadDialog"
                                             class="text-sm/6 font-semibold text-gray-900">Close</button>
                                     </div>
                                 </form>

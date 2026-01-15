@@ -5,6 +5,8 @@ import { Head, router } from '@inertiajs/vue3';
 import EnrollDialog from './EnrollDialog.vue'
 import ReadDialog from './ReadDialog.vue';
 import EditDialog from './EditDialog.vue';
+import CompanyReadDialog from '../Company/ReadDialog.vue'
+
 
 const props = defineProps({
     title: {
@@ -12,6 +14,10 @@ const props = defineProps({
         default: ''
     },
     datas: {
+        type: Array,
+        default: () => []
+    },
+    company: {
         type: Array,
         default: () => []
     },
@@ -47,9 +53,14 @@ const columns = [
     },
 
     {
-        title: 'Name',
-        dataIndex: 'name',
-        key: 'name',
+        title: 'Full Name',
+        dataIndex: 'fullName',
+        key: 'fullName',
+    },
+    {
+        title: 'Company',
+        dataIndex: 'company_name',
+        key: 'company_name',
     },
     {
         title: 'Email',
@@ -57,14 +68,9 @@ const columns = [
         key: 'email',
     },
     {
-        title: 'Logo',
-        dataIndex: 'logo',
-        key: 'logo',
-    },
-    {
-        title: 'Website',
-        dataIndex: 'website',
-        key: 'website',
+        title: 'Phone',
+        dataIndex: 'phone',
+        key: 'phone',
     },
     {
         title: 'Action',
@@ -76,7 +82,7 @@ const columns = [
 
 
 const handlePaginate = (pagination) => {
-    router.get(route('company.index'), {
+    router.get(route('employee.index'), {
         page: pagination.current,
     }, {
         preserveScroll: true,
@@ -94,7 +100,7 @@ const handleRemove = (id, name) => {
 }
 
 const handleRemoveData = () => {
-    router.delete(route('company.destroy', selectedId.value), {
+    router.delete(route('employee.destroy', selectedId.value), {
         onFinish: () => {
             showToast.value = true;
             selectedId.value = ref("");
@@ -108,7 +114,8 @@ const handleRemoveData = () => {
 }
 
 // bagian ReadDialog
-const companyData = ref({})
+const employeeData = ref({})
+const selectedCompany = ref({})
 
 </script>
 
@@ -133,26 +140,18 @@ const companyData = ref({})
                     current: props.datas.meta.current_page,
                     pageSize: props.datas.meta.per_page,
                     total: props.datas.meta.total,
-                    scroll: { x: 'max-content' }
                 }" @change="handlePaginate">
                     <template #bodyCell="{ column, record }">
-
-                        <template v-if="column.key === 'logo'">
-                            <div class="rounded w-24 h-24 flex items-center justify-center">
-                                <img :src="record.logo" alt="" />
-                            </div>
-                        </template>
-
-                        <template v-if="column.key === 'website'">
-                            <button class="text-blue-500 underline text-left">
-                                <a :href="record.website" target="_blank">{{
-                                    record.website }}</a>
+                        <template v-if="column.key === 'company_name'">
+                            <button type="button" @click="(selectedCompany = { ...record.company })"
+                                command="show-modal" commandfor="companyReadDialog"
+                                class="bg-blue-200 inline-flex items-center text-body bg-neutral-primary-soft border border-default hover:bg-neutral-secondary-medium hover:text-heading focus:ring-3 focus:ring-neutral-tertiary-soft font-medium leading-5 rounded-s-base text-sm px-3 py-2 focus:outline-none">
+                                <span class="font-bold underline">{{ record.company.name }}</span>
                             </button>
                         </template>
-
                         <template v-if="column.key === 'action'">
                             <div class="inline-flex rounded shadow-xs -space-x-px" role="group">
-                                <button type="button" @click="(companyData = { ...record })" command="show-modal"
+                                <button type="button" @click="(employeeData = { ...record })" command="show-modal"
                                     commandfor="editDialog"
                                     class="bg-slate-200 inline-flex items-center text-body bg-neutral-primary-soft border border-default hover:bg-neutral-secondary-medium hover:text-heading focus:ring-3 focus:ring-neutral-tertiary-soft font-medium leading-5 rounded-s-base text-sm px-3 py-2 focus:outline-none">
                                     <span>
@@ -165,7 +164,7 @@ const companyData = ref({})
                                         </svg>
                                     </span>
                                 </button>
-                                <button @click="(companyData = { ...record })" command="show-modal"
+                                <button @click="(employeeData = { ...record })" command="show-modal"
                                     commandfor="readDialog"
                                     class="bg-slate-200 inline-flex items-center text-body bg-neutral-primary-soft border border-default hover:bg-neutral-secondary-medium hover:text-heading focus:ring-3 focus:ring-neutral-tertiary-soft font-medium leading-5 rounded-s-base text-sm px-3 py-2 focus:outline-none">
                                     <span>
@@ -177,7 +176,7 @@ const companyData = ref({})
                                         </svg>
                                     </span>
                                 </button>
-                                <button @click="handleRemove(record.id, record.name)" command="show-modal"
+                                <button @click="handleRemove(record.id, record.fullName)" command="show-modal"
                                     commandfor="removeDialog"
                                     class="bg-slate-200 inline-flex items-center text-body bg-neutral-primary-soft border border-default hover:bg-neutral-secondary-medium hover:text-heading focus:ring-3 focus:ring-neutral-tertiary-soft font-medium leading-5 rounded-s-base text-sm px-3 py-2 focus:outline-none">
                                     <span>
@@ -226,7 +225,7 @@ const companyData = ref({})
                                     <div class="mt-2">
                                         <p class="text-sm text-gray-500">Are you sure you want to Remove
                                             "<strong>{{ selectedName }}</strong>" from
-                                            company?</p>
+                                            employee?</p>
                                     </div>
                                 </div>
                             </div>
@@ -249,11 +248,12 @@ const companyData = ref({})
         <!-- notif/toast for removed -->
         <div v-if="showToast" class="fixed top-40 right-5 bg-green-400 
             text-white px-4 py-2 rounded transition-all duration-1000 shadow-md ease-in-out">
-            Data berhasil dihapus!
+            {{ title }} removed
         </div>
-        <EnrollDialog />
-        <ReadDialog :data="companyData" />
-        <EditDialog :data="companyData" />
+        <EnrollDialog :companies="company" />
+        <ReadDialog :data="employeeData" />
+        <EditDialog :data="employeeData" :companies="company" />
+        <CompanyReadDialog :data="selectedCompany" />
 
     </AuthenticatedLayout>
 </template>
