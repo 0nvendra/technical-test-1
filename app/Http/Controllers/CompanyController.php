@@ -129,9 +129,9 @@ class CompanyController extends Controller
 
                 // store yang baru, mantap
                 Storage::disk('public')->put($hasil, $image->encode());
-
-                $company->update($data);
+                
             }
+            $company->update($data);
             DB::commit();
             return redirect()->route('company.index')->with('success', 'Company Updated');
         } catch (\Exception $e) {
